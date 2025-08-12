@@ -12,7 +12,7 @@ public class Vote {
     private String username;
     private String option; // e.g., "Team A", "Option 1"
 
-    private LocalDate timestamp = LocalDate.now();
+    private LocalDate date = LocalDate.now();
 
     
     public Vote() {}
@@ -26,10 +26,10 @@ public class Vote {
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getOption() { return option; }
-    public LocalDate getTimestamp() { return timestamp; }
+    public LocalDate getTimestamp() { return date; }
 
     public void setId(Long id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
     public void setOption(String option) { this.option = option; }
-    public void setTimestamp(LocalDate timestamp) { this.timestamp = timestamp; }
+    public void setTimestamp(LocalDate timestamp) { this.date = timestamp; }
 }
