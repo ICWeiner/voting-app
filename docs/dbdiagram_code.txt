@@ -1,0 +1,57 @@
+
+Table Users {
+  userId integer [primary key]
+  username varchar [not null]
+  email varchar
+  passwordHash varchar [not null]
+  role enum [not null]
+}
+
+Table Bet {
+  betId integer [primary key]
+  amount integer [not null]
+  betDateTime DATETIME 
+  userId integer [not null]
+  contestId integer [not null]
+}
+
+Table Contestant {
+  contestantId integer [primary key]
+  contestantName varchar
+  profession varchar
+  age integer
+  studies enum
+  notes varchar
+}
+
+Table Presenter {
+  presenterId integer [primary key]
+  presenterName varchar
+}
+
+Table ContestPresenter {
+  contestantId integer [primary key]
+  presenterId integer [primary key]
+  notes varchar
+}
+
+Table Contest {
+  contestId integer [primary key]
+  title varchar
+  description varchar
+  startDateTime DATETIME 
+  endDateTime DATETIME 
+  prize integer
+  contestantId integer [not null]
+}
+
+Table ContestContestant {
+  contestId integer [primary key]
+  contestantId integer [primary key]
+  isSuperJoker bool [not null]
+}
+
+Ref: Users.userId < Bet.userId
+Ref: Contest.contestId <> Contestant.contestantId
+Ref: Bet.contestId < Contest.contestId
+Ref: Presenter.presenterId <> Contest.contestId
