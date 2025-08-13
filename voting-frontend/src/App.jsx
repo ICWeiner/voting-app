@@ -1,6 +1,7 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VotePage from './pages/VotePage';
+import LoginRegisterPage from "./pages/LoginRegisterPage";
 
 function NotFound() {
   return (
@@ -16,6 +17,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<VotePage />} />
+        <Route path="/auth" element={<LoginRegisterPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

@@ -5,6 +5,8 @@ import com.joker.apostas.repository.VoteRepository;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import java.util.List;
 import java.time.LocalDate;
@@ -21,6 +23,7 @@ public class VoteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public void submitVote(@RequestBody Vote vote) {
         vote.setTimestamp(LocalDate.now());
         voteRepository.save(vote);
