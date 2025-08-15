@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 export default function AuthForm({ type, onSuccess }) {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState(""); // can be username OR email
+  const [email, setEmail] = useState(""); // used only for register
+  const [username, setUsername] = useState(""); // used only for register
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
@@ -10,9 +11,12 @@ export default function AuthForm({ type, onSuccess }) {
     e.preventDefault();
     const endpoint = `http://localhost:8000/auth/${type}`;
 
-    const body = type === "register"
-      ? { email, username, password }
-      : { email, password };
+    let body;
+    if (type === "register") {
+      body = { email, username, password };
+    } else {
+      body = { identifier, password }; // backend expects "identifier"
+    }
 
     try {
       const res = await fetch(endpoint, {
@@ -38,22 +42,34 @@ export default function AuthForm({ type, onSuccess }) {
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: "1.5rem" }}>
       <h2>{type === "register" ? "Register" : "Login"}</h2>
-      {type === "register" && (
+
+      {type === "register" ? (
+        <>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </>
+      ) : (
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username or Email"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
         />
       )}
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+
       <input
         type="password"
         placeholder="Password"

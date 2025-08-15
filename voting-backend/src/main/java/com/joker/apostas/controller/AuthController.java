@@ -35,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public TokenResponse login(@RequestBody LoginRequest request) {
-        log.info("Login endpoint called with username={}", request.getUsername());
+        log.info("Login endpoint called with identifier={}", request.getIdentifier());
         return authService.login(request);
     }
 }
