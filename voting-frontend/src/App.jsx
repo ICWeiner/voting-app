@@ -1,4 +1,5 @@
 // src/App.jsx
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VotePage from './pages/VotePage';
 import LoginRegisterPage from "./pages/LoginRegisterPage";
@@ -13,11 +14,13 @@ function NotFound() {
 }
 
 function App() {
+  const [token, setToken] = useState(null);
+  
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<VotePage />} />
-        <Route path="/auth" element={<LoginRegisterPage />} />
+        <Route path="/" element={<VotePage token={token} key={token}/>} />
+        <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

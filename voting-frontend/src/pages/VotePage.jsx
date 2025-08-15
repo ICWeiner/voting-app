@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 const OPTIONS = ["0€", "200€", "500€", "1000€", "3000€", "10000€", "50000€"];
 
-function VotePage() {
+function VotePage( { token } ) {
   const [username, setUsername] = useState('');
   const [option, setOption] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -13,7 +13,9 @@ function VotePage() {
     if (!username || !option) return;
     await fetch('http://localhost:8000/api/vote', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 
+                  "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ username, option }),
     });
     setSubmitted(true);

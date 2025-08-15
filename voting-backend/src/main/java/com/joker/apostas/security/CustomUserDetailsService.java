@@ -3,7 +3,7 @@ package com.joker.apostas.security;
 import com.joker.apostas.model.User;
 import com.joker.apostas.repository.UserRepository;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,18 +21,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-    User ua = repo.findByEmail(identifier)
+    User user = repo.findByEmail(identifier)
         .or(() -> repo.findByUsername(identifier))
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    Collection<GrantedAuthority> auths =
-        Arrays.stream(ua.getRole().split(","))
-              .map(String::trim)
-              .filter(s -> !s.isEmpty())
-              .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
-              .collect(Collectors.toList());
-
     return new org.springframework.security.core.userdetails.User(
-        ua.getUsername(), ua.getPasswordHash(), auths);
+            user.getUsername(), 
+            user.getPasswordHash(), 
+            Collections.singletonList(new SimpleGrantedAuthority(user.getRole()))
+            );
   }
 }
