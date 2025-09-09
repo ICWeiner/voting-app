@@ -50,8 +50,7 @@ CREATE TABLE Contest (
     description TEXT,
     startDateTime TIMESTAMP,
     endDateTime TIMESTAMP,
-    prize INT,
-    contestantId INT NOT NULL REFERENCES Contestant(contestantId)
+    prize INT
 );
 
 CREATE TABLE Bet (
@@ -70,8 +69,8 @@ CREATE TABLE ContestContestant (
 );
 
 CREATE TABLE ContestPresenter (
-    contestantId INT NOT NULL REFERENCES Contestant(contestantId),
+    contestId INT NOT NULL REFERENCES Contest(contestId),
     presenterId INT NOT NULL REFERENCES Presenter(presenterId),
     notes TEXT,
-    PRIMARY KEY (contestantId, presenterId)
+    PRIMARY KEY (contestId, presenterId)
 );

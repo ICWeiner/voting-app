@@ -3,6 +3,8 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VotePage from './pages/VotePage';
 import LoginRegisterPage from "./pages/LoginRegisterPage";
+import HomePage from "./pages/HomePage";
+import ContestForm from "./components/ContestForm";
 
 function NotFound() {
   return (
@@ -19,7 +21,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<VotePage token={token} key={token}/>} />
+       {/*  <Route path="/" element={<VotePage token={token} key={token}/>} /> */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/create_contest" element={<ContestForm />} />
         <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
