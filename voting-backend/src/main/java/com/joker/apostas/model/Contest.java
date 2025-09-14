@@ -29,7 +29,7 @@ public class Contest {
     private Integer prize;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL)
-    private List<ContestContestant> contestants;
+    private List<ContestContestant> contestContestants;
 
     public Contest() {}
 
@@ -49,6 +49,7 @@ public class Contest {
     public LocalDateTime getStartDateTime() { return startDateTime; }
     public LocalDateTime getEndDateTime() { return endDateTime; }
     public Integer getPrize() { return prize; }
+    public List<ContestContestant> getContestContestants() {return contestContestants; }
 
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -57,4 +58,5 @@ public class Contest {
     public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
     public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
     public void setPrize(Integer prize) { this.prize = prize; }
+    public void setContestContestants(List<ContestContestant> contestContestants) {this.contestContestants = contestContestants; }
 }

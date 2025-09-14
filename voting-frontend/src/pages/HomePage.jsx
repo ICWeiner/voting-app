@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+//TODO FIX THIS!!!!!!!
+
 export default function HomePage() {
   const [contests, setContests] = useState([]);
   //const [contestants, setContestants] = useState([]);

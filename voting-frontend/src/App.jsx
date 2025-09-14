@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VotePage from './pages/VotePage';
 import LoginRegisterPage from "./pages/LoginRegisterPage";
 import HomePage from "./pages/HomePage";
-import ContestForm from "./components/ContestForm";
+import CreateContestContestantForm from "./components/CreateContestContestantForm";
 
 function NotFound() {
   return (
@@ -23,7 +23,7 @@ function App() {
       <Routes>
        {/*  <Route path="/" element={<VotePage token={token} key={token}/>} /> */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/create_contest" element={<ContestForm />} />
+        <Route path="/create_contest" element={<CreateContestContestantForm />} />
         <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

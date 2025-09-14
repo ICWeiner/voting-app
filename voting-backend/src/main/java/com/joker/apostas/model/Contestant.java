@@ -32,7 +32,7 @@ public class Contestant {
     private String notes;
 
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.ALL)
-    private List<ContestContestant> contestLinks;
+    private List<ContestContestant> contestContestants;
 
     public Contestant() {}
 
@@ -51,6 +51,7 @@ public class Contestant {
     public Integer getAge() { return age; }
     public StudiesType getStudies() { return studies; }
     public String getNotes() { return notes; }
+    public List<ContestContestant> getContestContestants() { return contestContestants; }
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -58,4 +59,5 @@ public class Contestant {
     public void setAge(Integer age) { this.age = age; }
     public void setStudies(StudiesType studies) { this.studies = studies; }
     public void setNotes(String notes) { this.notes = notes; }
+    public void setContestContestants(List<ContestContestant> contestContestants) { this.contestContestants = contestContestants; }
 }

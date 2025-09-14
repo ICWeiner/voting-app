@@ -37,8 +37,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/auth/**").permitAll()
         .requestMatchers("/admin/**").hasRole("ADMIN")
-        .requestMatchers("/api/contests").permitAll() 
-        .requestMatchers("/api/create_contest").permitAll() 
+        .requestMatchers("/api/**").permitAll() 
         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .anyRequest().authenticated()
       )
