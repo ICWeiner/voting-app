@@ -29,6 +29,7 @@ public class ContestContestant {
         this.contest = contest;
         this.contestant = contestant;
         this.isSuperJoker = isSuperJoker;
+        this.id = new ContestContestantId(contest.getId(), contestant.getId());
     }
 
     // Getters & Setters

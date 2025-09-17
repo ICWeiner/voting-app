@@ -1,8 +1,5 @@
 package com.joker.apostas.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.joker.apostas.dto.CreateContestContestantDto;
@@ -11,7 +8,6 @@ import com.joker.apostas.dto.CreateContestantDto;
 import com.joker.apostas.model.Contest;
 import com.joker.apostas.model.ContestContestant;
 import com.joker.apostas.model.Contestant;
-import com.joker.apostas.model.id.ContestContestantId;
 import com.joker.apostas.repository.ContestContestantRepository;
 import com.joker.apostas.repository.ContestRepository;
 import com.joker.apostas.repository.ContestantRepository;
@@ -60,14 +56,7 @@ public class ContestContestantService {
         Contestant contestant = this.contestantRepository.findById(dto.contestantId)
             .orElseThrow(() -> new RuntimeException("Contestant not found"));
 
-        ContestContestant contestContestant = new ContestContestant();
-        contestContestant.setContest(contest);
-        contestContestant.setContestant(contestant);
-        contestContestant.setIsSuperJoker(dto.isSuperJoker);
-        contestContestant.setId(new ContestContestantId(contest.getId(), contestant.getId()));
-
-        contest.getContestContestants().add(contestContestant);
-        contestant.getContestContestants().add(contestContestant);
+        ContestContestant contestContestant = new ContestContestant(contest, contestant, dto.isSuperJoker);
 
         return this.contestContestantRepository.save(contestContestant);
     }
