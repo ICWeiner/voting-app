@@ -1,0 +1,48 @@
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f5f6fa;
+}
+
+.bg-custom {
+  background-color: #3A436A !important;
+}
+
+.text-custom {
+  color: #3A436A !important;
+}
+
+.btn-custom {
+  background-color: #3A436A !important;
+  color: white !important;
+  border: none;
+}
+
+.btn-custom:hover {
+  background-color: #2d3452 !important;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.joker-logo {
+  width: 9em;
+  height: auto;
+  margin-bottom: 2em;
+}
+
+/* Mobile offcanvas sidebar overlay */
+.offcanvas-mobile {
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .joker-logo {
+    width: 6em;
+    margin-bottom: 1em;
+  }
+}

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "contest")
 public class Contest {
@@ -29,6 +31,7 @@ public class Contest {
     private Integer prize;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL)
+   @JsonManagedReference("contest-contestants")
     private List<ContestContestant> contestContestants;
 
     public Contest() {}

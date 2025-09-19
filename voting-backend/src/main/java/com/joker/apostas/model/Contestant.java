@@ -2,6 +2,7 @@ package com.joker.apostas.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.joker.apostas.model.enums.StudiesType;
 
 import jakarta.persistence.*;
@@ -32,6 +33,7 @@ public class Contestant {
     private String notes;
 
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.ALL)
+    @JsonBackReference("contestant-contests")
     private List<ContestContestant> contestContestants;
 
     public Contestant() {}

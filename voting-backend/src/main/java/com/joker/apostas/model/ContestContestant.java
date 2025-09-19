@@ -1,4 +1,6 @@
 package com.joker.apostas.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.joker.apostas.model.id.ContestContestantId;
 
 import jakarta.persistence.*;
@@ -13,11 +15,13 @@ public class ContestContestant {
     @ManyToOne
     @MapsId("contestId")
     @JoinColumn(name = "contestid")
+    @JsonBackReference("contest-contestants")
     private Contest contest;
 
     @ManyToOne
     @MapsId("contestantId")
     @JoinColumn(name = "contestantid")
+    @JsonManagedReference("contestant-contests")
     private Contestant contestant;
 
     @Column(name = "issuperjoker", nullable = false)
