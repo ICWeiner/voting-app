@@ -3,20 +3,18 @@ import { useEffect, useState } from 'react';
 
 const OPTIONS = ["0€", "200€", "500€", "1000€", "3000€", "10000€", "50000€"];
 
-function VotePage( { token } ) {
-  const [username, setUsername] = useState('');
+function VotePage() {
   const [option, setOption] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState([]);
 
   const submitVote = async () => {
-    if (!username || !option) return;
+    if (!option) return;
     await fetch('http://localhost:8000/api/vote', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 
-                  "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ username, option }),
+      headers: { 'Content-Type': 'application/json'},
+      credentials: "include", 
+      body: JSON.stringify({ option }),
     });
     setSubmitted(true);
   };
@@ -36,11 +34,6 @@ function VotePage( { token } ) {
       <h1>Daily Prediction</h1>
       {!submitted ? (
         <>
-          <input
-            placeholder="Your name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
           <div>
             {OPTIONS.map((c) => (
               <label key={c} style={{ display: 'block' }}>

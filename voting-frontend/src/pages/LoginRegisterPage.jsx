@@ -1,9 +1,10 @@
 import AuthForm from "../components/AuthForm";
 
-export default function LoginRegisterPage( { setToken } ) {
+export default function LoginRegisterPage() {
   const handleSuccess = (data) => {
     console.log("User authenticated:", data);
-    setToken(data.token);
+
+
     // optionally redirect
   };
 

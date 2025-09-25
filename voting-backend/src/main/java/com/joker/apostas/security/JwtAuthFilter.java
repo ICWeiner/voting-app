@@ -4,6 +4,7 @@ import com.joker.apostas.service.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -38,28 +39,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                   FilterChain filterChain)
       throws ServletException, IOException {
     
-    String header = request.getHeader("Authorization");
-    if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-      String token = header.substring(7);
-      log.info("JWT token: {}", token);
-      try {
+    String token = extractJwtFromCookie(request);
+    log.info("JWT token: {}", token);
+    try {
+      if (token != null && jwtService.isTokenValid(token)) {
+
         String username = jwtService.getUsername(token);
+
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
           
-          UserDetails user = userDetailsService.loadUserByUsername(username);
+          UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
           UsernamePasswordAuthenticationToken auth =
-              new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+              new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
           auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
           SecurityContextHolder.getContext().setAuthentication(auth);
         }
-      } catch (Exception e) {
-          log.warn("JWT authentication failed: {}", e.getMessage());
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
-          return;
       }
+    } catch (Exception e) {
+        log.warn("JWT authentication failed: {}", e.getMessage());
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
+        return;
     }
+    
     filterChain.doFilter(request, response);
+  }
+
+  private String extractJwtFromCookie(HttpServletRequest request) {
+    if (request.getCookies() != null) {
+        for (Cookie cookie : request.getCookies()) {
+            if ("access_token".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+    }
+    return null;
   }
 }

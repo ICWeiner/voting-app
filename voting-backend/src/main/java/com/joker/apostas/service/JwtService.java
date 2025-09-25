@@ -19,7 +19,7 @@ public class JwtService {
 
   public JwtService(
       @Value("${app.jwt.secret}") String secret,
-      @Value("${app.jwt.expiration-seconds:36000}") long expirationSeconds) {
+      @Value("${app.jwt.expiration-seconds:7200}") long expirationSeconds) {
     this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     this.expirationSeconds = expirationSeconds;
   }
@@ -46,4 +46,13 @@ public class JwtService {
   public String getUsername(String token) {
     return parseToken(token).getBody().getSubject();
   }
+
+  public boolean isTokenValid(String token) {
+    try {
+        parseToken(token); // this will throw if invalid or expired
+        return true;
+    } catch (JwtException | IllegalArgumentException e) {
+        return false;
+    }
+}
 }
