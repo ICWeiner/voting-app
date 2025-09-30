@@ -23,7 +23,7 @@ function App() {
       <Routes>
        {/*  <Route path="/" element={<VotePage token={token} key={token}/>} /> */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/create_contest" element={<CreateContestContestantForm />} />
+        <Route path="/contest-contestants/create" element={<CreateContestContestantForm />} />
         <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

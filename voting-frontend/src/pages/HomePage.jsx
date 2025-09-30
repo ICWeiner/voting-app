@@ -15,31 +15,54 @@ export default function HomePage() {
   }, []);
 
   const sortedContests = [...contests].sort(
-    (a, b) => new Date(a.startDateTime) - new Date(b.startDateTime)
+    (a, b) => new Date(b.startDateTime) - new Date(a.startDateTime)
   );
 
   return (
     <Layout>
       {/* Middle table */}
-      <div className="flex-grow-1 m-3 text-center">
+      <div className="flex-grow-1 m-3 text-center text-custom">
         <h3>Concursos</h3>
         <div className="table-responsive">
           <table className="table mt-3 mb-0">
             <thead>
               <tr>
-                <th>Título</th>
-                <th>Nome concorrente</th>
-                <th>Resultado (€)</th>
-                <th>Data</th>
+                <th className="bg-custom text-white">Título</th>
+                <th className="bg-custom text-white">Nome concorrentes</th>
+                <th className="bg-custom text-white">Prémio (€)</th>
+                <th className="bg-custom text-white">Data e hora</th>
               </tr>
             </thead>
             <tbody>
               {sortedContests.map((contest) => (
-                <tr key={contest.id}>
-                  <td>{contest.title}</td>
-                  <td>{contest.contestContestants?.map(cc => cc.contestant?.name).join(", ") || "Nenhum"}</td>
-                  <td>{contest.prize} €</td>
-                  <td>{new Date(contest.startDateTime).toLocaleDateString()}</td>
+                <tr key={contest.id} className="border-warning">
+                  <td className="text-custom border-warning">{contest.title}</td>
+                  <td className="text-custom">{contest.contestContestants?.map(cc => cc.contestant?.name).join(", ")}</td>
+                  <td className="text-custom">{contest.prize} €</td>
+                  <td className="text-custom">
+                    {(() => {
+                      const contestDate = new Date(contest.startDateTime);
+                      const today = new Date();
+                      const yesterday = new Date();
+                      yesterday.setDate(today.getDate() - 1);
+
+                      const isToday =
+                        contestDate.getDate() === today.getDate() &&
+                        contestDate.getMonth() === today.getMonth() &&
+                        contestDate.getFullYear() === today.getFullYear();
+
+                      const isYesterday =
+                        contestDate.getDate() === yesterday.getDate() &&
+                        contestDate.getMonth() === yesterday.getMonth() &&
+                        contestDate.getFullYear() === yesterday.getFullYear();
+
+                      const time = contestDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+                      if (isToday) return `Hoje, ${time}`;
+                      if (isYesterday) return `Ontem, ${time}`;
+                      return `${contestDate.toLocaleDateString() + ", "} ${time}`;
+                    })()}
+                  </td>
                 </tr>
               ))}
             </tbody>
