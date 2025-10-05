@@ -1,5 +1,6 @@
 // src/pages/VotePage.jsx
 import { useEffect, useState } from 'react';
+import { request } from '../helpers/axios_helper';
 
 const OPTIONS = ["0€", "200€", "500€", "1000€", "3000€", "10000€", "50000€"];
 
@@ -10,19 +11,24 @@ function VotePage() {
 
   const submitVote = async () => {
     if (!option) return;
-    await fetch('http://localhost:8000/api/vote', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      credentials: "include", 
-      body: JSON.stringify({ option }),
-    });
-    setSubmitted(true);
+
+    try {
+      request('post', '/api/vote', { option });
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to submit vote');
+    }
   };
 
   const fetchResults = async () => {
-    const res = await fetch('http://localhost:8000/api/vote/today');
-    const data = await res.json();
-    setResults(data);
+    try {
+      const res = request('get', '/api/vote/today');
+      setResults(res.data);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to fetch results');
+    }
   };
 
   useEffect(() => {
