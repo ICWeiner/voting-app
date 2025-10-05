@@ -30,8 +30,8 @@ public class Contest {
     @Column(name = "prize")
     private Integer prize;
 
-    @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL)
-   @JsonManagedReference("contest-contestants")
+    @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("contest-contestants")
     private List<ContestContestant> contestContestants;
 
     public Contest() {}

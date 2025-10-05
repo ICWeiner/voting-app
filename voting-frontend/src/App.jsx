@@ -5,6 +5,8 @@ import VotePage from './pages/VotePage';
 import LoginRegisterPage from "./pages/LoginRegisterPage";
 import HomePage from "./pages/HomePage";
 import CreateContestContestantForm from "./components/CreateContestContestantForm";
+import EditContestContestantForm from "./components/EditContestContestantForm";
+import ContestContestantDetail from "./components/ContestContestantDetail";
 
 function NotFound() {
   return (
@@ -23,9 +25,11 @@ function App() {
       <Routes>
        {/*  <Route path="/" element={<VotePage token={token} key={token}/>} /> */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/contest-contestants/create" element={<CreateContestContestantForm />} />
         <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/contest-contestants/create" element={<CreateContestContestantForm />} />
+        <Route path="/contest-contestants/edit/:id" element={<EditContestContestantForm />} />
+        <Route path="/contest-contestants/detail/:id" element={<ContestContestantDetail />} />
       </Routes>
     </Router>
   );

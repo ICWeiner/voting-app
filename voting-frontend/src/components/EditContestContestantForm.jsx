@@ -1,27 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../pages/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-
-const CreateContestContestantForm = () => {
+const EditContestContestantForm = () => {
   const navigate = useNavigate();
-
-  const getTodayAt21 = () => {
-    const now = new Date();
-    now.setHours(21, 0, 0, 0);
-    const pad = (num) => String(num).padStart(2, "0");
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  };
+  const { id } = useParams();
 
   const [contest, setContest] = useState({
     title: "",
     description: "",
-    startDateTime: getTodayAt21(), // default to today 21:00
+    startDateTime: "",
     endDateTime: "",
     prize: ""
   });
 
   const [contestant1, setContestant1] = useState({
+    id: null,
     name: "",
     profession: "",
     age: "",
@@ -30,6 +24,7 @@ const CreateContestContestantForm = () => {
   });
 
   const [contestant2, setContestant2] = useState({
+    id: null,
     name: "",
     profession: "",
     age: "",
@@ -40,17 +35,55 @@ const CreateContestContestantForm = () => {
   const [allowCustomEndDate, setAllowCustomEndDate] = useState(false);
 
   const formatDateForInput = (date) => {
+    const d = new Date(date);
     const pad = (num) => String(num).padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
 
   useEffect(() => {
-    if (contest.startDateTime && !allowCustomEndDate) {
-      const start = new Date(contest.startDateTime);
-      const end = new Date(start.getTime() + 60 * 60 * 1000);
-      setContest(prev => ({ ...prev, endDateTime: formatDateForInput(end) }));
-    }
-  }, [contest.startDateTime, allowCustomEndDate]);
+    const fetchContest = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/contests/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch contest");
+        const data = await res.json();
+
+        setContest({
+          title: data.title || "",
+          description: data.description || "",
+          startDateTime: data.startDateTime ? formatDateForInput(data.startDateTime) : "",
+          endDateTime: data.endDateTime ? formatDateForInput(data.endDateTime) : "",
+          prize: data.prize != null ? data.prize : ""
+        });
+
+        const cc = data.contestContestants || [];
+        const main = cc.find(c => !c.isSuperJoker);
+        const superJoker = cc.find(c => c.isSuperJoker);
+
+        if (main) setContestant1({
+          id: main.contestant.id,
+          name: main.contestant.name || "",
+          profession: main.contestant.profession || "",
+          age: main.contestant.age != null ? main.contestant.age : "",
+          studies: main.contestant.studies || "",
+          notes: main.contestant.notes || ""
+        });
+
+        if (superJoker) setContestant2({
+          id: superJoker.contestant.id,
+          name: superJoker.contestant.name || "",
+          profession: superJoker.contestant.profession || "",
+          age: superJoker.contestant.age != null ? superJoker.contestant.age : "",
+          studies: superJoker.contestant.studies || "",
+          notes: superJoker.contestant.notes || ""
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao carregar concurso: " + err.message);
+      }
+    };
+
+    fetchContest();
+  }, [id]);
 
   const handleContestChange = (e) => setContest({ ...contest, [e.target.name]: e.target.value });
   const handleContestant1Change = (e) => setContestant1({ ...contestant1, [e.target.name]: e.target.value });
@@ -59,49 +92,45 @@ const CreateContestContestantForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const contestRes = await fetch("http://localhost:8000/api/contests/create", {
-        method: "POST",
+      await fetch(`http://localhost:8000/api/contests/edit/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...contest, prize: contest.prize !== "" ? Number(contest.prize) : null }),
-      });
-      const contestData = await contestRes.json();
-      const contestId = contestData.id;
-
-      const contestant1Res = await fetch("http://localhost:8000/api/contestants/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...contestant1, age: contestant1.age !== "" ? Number(contestant1.age) : null, studies: contestant1.studies || null }),
-      });
-      const contestant1Data = await contestant1Res.json();
-
-      await fetch("http://localhost:8000/api/contest-contestants/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contestId, contestantId: contestant1Data.id, isSuperJoker: false }),
+        body: JSON.stringify({ ...contest, prize: contest.prize !== "" ? Number(contest.prize) : null })
       });
 
-      const contestant2Res = await fetch("http://localhost:8000/api/contestants/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...contestant2, age: contestant2.age !== "" ? Number(contestant2.age) : null, studies: contestant2.studies || null }),
-      });
-      const contestant2Data = await contestant2Res.json();
+      if (contestant1.id) {
+        await fetch(`http://localhost:8000/api/contestants/edit/${contestant1.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: contestant1.name || null,
+            profession: contestant1.profession || null,
+            age: contestant1.age !== "" ? Number(contestant1.age) : null,
+            studies: contestant1.studies !== "" ? contestant1.studies : null,
+            notes: contestant1.notes || null
+          })
+        });
+      }
 
-      await fetch("http://localhost:8000/api/contest-contestants/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contestId, contestantId: contestant2Data.id, isSuperJoker: true }),
-      });
+      if (contestant2.id) {
+        await fetch(`http://localhost:8000/api/contestants/edit/${contestant2.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: contestant2.name || null,
+            profession: contestant2.profession || null,
+            age: contestant2.age !== "" ? Number(contestant2.age) : null,
+            studies: contestant2.studies !== "" ? contestant2.studies : null,
+            notes: contestant2.notes || null
+          })
+        });
+      }
 
-      console.log("Contest and contestants created successfully!"); //TODO improve error and success messages
-      setContest({ title: "", description: "", startDateTime: "", endDateTime: "", prize: "" });
-      setContestant1({ name: "", profession: "", age: "", studies: "", notes: "" });
-      setContestant2({ name: "", profession: "", age: "", studies: "", notes: "" });
-      setAllowCustomEndDate(false);
-      navigate("/"); //TODO redirect to contest detail page?
+      alert("Concurso atualizado com sucesso!");
+      navigate("/");
     } catch (err) {
       console.error(err);
-      alert("Something went wrong: " + err.message); //TODO improve error and success messages
+      alert("Erro ao atualizar concurso: " + err.message);
     }
   };
 
@@ -109,7 +138,7 @@ const CreateContestContestantForm = () => {
     <Layout>
       <div className="container my-4">
         <form onSubmit={handleSubmit}>
-          <h2 className="text-center mb-4 text-custom">Criar Concurso</h2>
+          <h2 className="text-center mb-4 text-custom">Editar Concurso</h2>
 
           {/* Contest Info */}
           <div className="card shadow-sm mb-4 border-warning">
@@ -139,12 +168,7 @@ const CreateContestContestantForm = () => {
               </div>
               <div className="mb-3 col-md-4">
                 <label className="form-label">Prémio (€)</label>
-                <select
-                  name="prize"
-                  className="form-select"
-                  value={contest.prize}
-                  onChange={handleContestChange}
-                >
+                <select name="prize" className="form-select" value={contest.prize} onChange={handleContestChange}>
                   <option value="">Selecione o prémio</option>
                   <option value={0}>0 €</option>
                   <option value={200}>200 €</option>
@@ -159,6 +183,7 @@ const CreateContestContestantForm = () => {
             </div>
           </div>
 
+          {/* Contestants */}
           <div className="row mb-4">
             {/* Contestant 1 */}
             <div className="col-md-6">
@@ -212,7 +237,7 @@ const CreateContestContestantForm = () => {
           </div>
 
           <div className="text-center">
-            <button type="submit" className="btn btn-custom border-warning">Criar Concurso</button>
+            <button type="submit" className="btn btn-custom border-warning">Atualizar Concurso</button>
           </div>
         </form>
       </div>
@@ -220,4 +245,4 @@ const CreateContestContestantForm = () => {
   );
 };
 
-export default CreateContestContestantForm;
+export default EditContestContestantForm;

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
 
 export default function HomePage() {
   const [contests, setContests] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8000/api/contests")
@@ -18,12 +20,40 @@ export default function HomePage() {
     (a, b) => new Date(b.startDateTime) - new Date(a.startDateTime)
   );
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que quer eliminar este concurso e respetivos concorrentes?")) return; //TODO improve error and success messages
+    try {
+      const res = await fetch(`http://localhost:8000/api/contests/delete/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Erro ao eliminar concurso");
+      setContests(contests.filter((c) => c.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Falha ao eliminar concurso: " + err.message); //TODO improve error and success messages
+    }
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/contest-contestants/edit/${id}`);
+  };
+
+  const handleView = (id) => {
+    navigate(`/contest-contestants/detail/${id}`);
+  };
+
+  const handleCreate = () => {
+    navigate("/contest-contestants/create");
+  };
+
+
   return (
     <Layout>
       {/* Middle table */}
       <div className="flex-grow-1 m-3 text-center text-custom">
         <h3>Concursos</h3>
         <div className="table-responsive">
+          <button className="btn btn-sm btn-custom border-warning m-2 d-flex flex-row" onClick={() => handleCreate()}>Adicionar Concurso</button>
           <table className="table mt-3 mb-0">
             <thead>
               <tr>
@@ -31,6 +61,7 @@ export default function HomePage() {
                 <th className="bg-custom text-white">Nome concorrentes</th>
                 <th className="bg-custom text-white">Prémio (€)</th>
                 <th className="bg-custom text-white">Data e hora</th>
+                <th className="bg-custom text-white">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -62,6 +93,11 @@ export default function HomePage() {
                       if (isYesterday) return `Ontem, ${time}`;
                       return `${contestDate.toLocaleDateString() + ", "} ${time}`;
                     })()}
+                  </td>
+                  <td>
+                    <button className="btn btn-sm btn-custom me-2" onClick={() => handleView(contest.id)}>Ver mais</button>
+                    <button className="btn btn-sm btn-warning me-2 text-custom" onClick={() => handleEdit(contest.id)}>Editar</button>
+                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(contest.id)}>Eliminar</button>
                   </td>
                 </tr>
               ))}

@@ -11,7 +11,6 @@ import org.jsoup.Jsoup;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Service
 public class ContestScraperService {
