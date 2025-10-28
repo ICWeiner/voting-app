@@ -1,6 +1,9 @@
 // src/App.jsx
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VotePage from './pages/VotePage';
+import LoginRegisterPage from "./pages/LoginRegisterPage";
+import Navbar from "./components/NavBar";
 
 function NotFound() {
   return (
@@ -12,10 +15,13 @@ function NotFound() {
 }
 
 function App() {
+  
   return (
     <Router>
+      <Navbar /> 
       <Routes>
-        <Route path="/" element={<VotePage />} />
+        <Route path="/" element={<VotePage/>} />
+        <Route path="/auth" element={<LoginRegisterPage/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
