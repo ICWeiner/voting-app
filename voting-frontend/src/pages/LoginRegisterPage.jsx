@@ -1,10 +1,15 @@
 import AuthForm from "../components/AuthForm";
+import { setAuthHeader } from '../helpers/axios_helper';
 
-export default function LoginRegisterPage( { setToken } ) {
+export default function LoginRegisterPage() {
   const handleSuccess = (data) => {
     console.log("User authenticated:", data);
-    setToken(data.token);
-    // optionally redirect
+
+    if (data && data.token) {
+      // Save the token locally (this also updates axios default headers)
+      setAuthHeader(data.token);
+    }
+
   };
 
   return (

@@ -1,41 +1,42 @@
 package com.joker.apostas.controller;
 
+import com.joker.apostas.config.UserAuthenticationProvider;
+import com.joker.apostas.dtos.CredentialsDto;
+import com.joker.apostas.dtos.SignUpDto;
+import com.joker.apostas.dtos.UserDto;
+import com.joker.apostas.service.UserService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.joker.apostas.service.AuthService;
-import com.joker.apostas.auth.RegisterRequest;
-import com.joker.apostas.auth.TokenResponse;
-import com.joker.apostas.auth.LoginRequest;
+import java.net.URI;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final UserService userService;
+    private final UserAuthenticationProvider userAuthenticationProvider;
 
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-
-    // Constructor injection instead of @RequiredArgsConstructor
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    @PostMapping("/login")
+    public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
+        UserDto userDto = userService.login(credentialsDto);
+        userDto.setToken(userAuthenticationProvider.createToken(userDto.getUsername()));
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/register")
-    public TokenResponse register(@RequestBody RegisterRequest request) {
-        log.info("Register endpoint called with username={}", request.getUsername());
-        return authService.register(request);
+    public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto signUpDto) {
+        UserDto createdUser = userService.register(signUpDto);
+        createdUser.setToken(userAuthenticationProvider.createToken(signUpDto.getUsername()));
+        return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
     }
 
-    @PostMapping("/login")
-    public TokenResponse login(@RequestBody LoginRequest request) {
-        log.info("Login endpoint called with identifier={}", request.getIdentifier());
-        return authService.login(request);
-    }
 }

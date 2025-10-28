@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { request, setAuthHeader } from "../helpers/axios_helper";
 
 export default function AuthForm({ type, onSuccess }) {
   const [identifier, setIdentifier] = useState(""); // can be username OR email
@@ -9,33 +10,33 @@ export default function AuthForm({ type, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = `http://localhost:8000/auth/${type}`;
 
-    let body;
-    if (type === "register") {
-      body = { email, username, password };
-    } else {
-      body = { identifier, password }; // backend expects "identifier"
-    }
+    const endpoint = `/auth/${type}`; // baseURL handled in helper
+
+    const body =
+      type === "register"
+        ? { email, username, password }
+        : { identifier, password };
 
     try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res = await request("POST", endpoint, body);
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage(`${type} successful!`);
-        onSuccess && onSuccess(data);
-      } else {
-        setMessage(data.message || "Something went wrong");
+      // Axios doesn’t use res.ok — instead, errors throw automatically
+      if (type === "login" && data.token) {
+        // Save JWT to localStorage via helper
+        setAuthHeader(data.token);
       }
+
+      setMessage(`${type} successful!`);
+      onSuccess && onSuccess(data);
     } catch (err) {
       console.error(err);
-      setMessage("Network error");
+      if (err.response) {
+        setMessage(err.response.data?.message || "Something went wrong");
+      } else {
+        setMessage("Network error");
+      }
     }
   };
 

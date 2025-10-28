@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import CreateContestContestantForm from "./components/CreateContestContestantForm";
 import EditContestContestantForm from "./components/EditContestContestantForm";
 import ContestContestantDetail from "./components/ContestContestantDetail";
+import Navbar from "./components/NavBar";
 
 function NotFound() {
   return (
@@ -18,14 +19,13 @@ function NotFound() {
 }
 
 function App() {
-  const [token, setToken] = useState(null);
   
   return (
     <Router>
+      <Navbar /> 
       <Routes>
-       {/*  <Route path="/" element={<VotePage token={token} key={token}/>} /> */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/auth" element={<LoginRegisterPage setToken={setToken} />} />
+        <Route path="/auth" element={<LoginRegisterPage/>} />
         <Route path="*" element={<NotFound />} />
         <Route path="/contest-contestants/create" element={<CreateContestContestantForm />} />
         <Route path="/contest-contestants/edit/:id" element={<EditContestContestantForm />} />
