@@ -42,7 +42,6 @@ Table Contest {
   startDateTime DATETIME 
   endDateTime DATETIME 
   prize integer
-  contestantId integer [not null]
 }
 
 Table ContestContestant {

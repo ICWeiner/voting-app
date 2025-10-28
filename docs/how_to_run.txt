@@ -1,0 +1,4 @@
+mvn spring-boot:run
+nodist use latest; npm run dev
+docker-compose down --volumes
+docker exec -it my_postgres psql -U apostas -d joker
