@@ -11,7 +11,7 @@ export default function ContestContestantDetail() {
   useEffect(() => {
     const fetchContest = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/contests/${id}`);
+        const res = await fetch(`http://localhost:8000/contests/${id}`);
         if (!res.ok) throw new Error("Erro ao carregar concurso");
         const data = await res.json();
         setContest(data);
@@ -28,7 +28,7 @@ export default function ContestContestantDetail() {
   const handleDelete = async () => {
     if (!window.confirm("Tem certeza que quer eliminar este concurso e os concorrentes relacionados?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/contests/delete/${id}`, {
+      const res = await fetch(`http://localhost:8000/contests/delete/${id}`, {
         method: "DELETE"
       });
       if (!res.ok) throw new Error("Erro ao eliminar concurso");

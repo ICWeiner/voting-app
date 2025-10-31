@@ -43,7 +43,7 @@ const EditContestContestantForm = () => {
   useEffect(() => {
     const fetchContest = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/contests/${id}`);
+        const res = await fetch(`http://localhost:8000/contests/${id}`);
         if (!res.ok) throw new Error("Failed to fetch contest");
         const data = await res.json();
 
@@ -92,14 +92,14 @@ const EditContestContestantForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`http://localhost:8000/api/contests/edit/${id}`, {
+      await fetch(`http://localhost:8000/contests/edit/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...contest, prize: contest.prize !== "" ? Number(contest.prize) : null })
       });
 
       if (contestant1.id) {
-        await fetch(`http://localhost:8000/api/contestants/edit/${contestant1.id}`, {
+        await fetch(`http://localhost:8000/contestants/edit/${contestant1.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -113,7 +113,7 @@ const EditContestContestantForm = () => {
       }
 
       if (contestant2.id) {
-        await fetch(`http://localhost:8000/api/contestants/edit/${contestant2.id}`, {
+        await fetch(`http://localhost:8000/contestants/edit/${contestant2.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

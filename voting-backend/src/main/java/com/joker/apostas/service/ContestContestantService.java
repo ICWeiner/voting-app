@@ -1,5 +1,6 @@
 package com.joker.apostas.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.joker.apostas.dto.CreateContestContestantDto;
@@ -19,9 +20,14 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class ContestContestantService {
     
-    private final ContestRepository contestRepository;
-    private final ContestantRepository contestantRepository;
-    private final ContestContestantRepository contestContestantRepository;
+    @Autowired
+    private ContestRepository contestRepository;
+    
+    @Autowired
+    private ContestantRepository contestantRepository;
+    
+    @Autowired
+    private ContestContestantRepository contestContestantRepository;
 
     public ContestContestantService(ContestRepository contestRepository, 
                              ContestantRepository contestantRepository, 

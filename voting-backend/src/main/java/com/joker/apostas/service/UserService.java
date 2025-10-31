@@ -1,14 +1,18 @@
 package com.joker.apostas.service;
 
-import com.joker.apostas.dtos.CredentialsDto;
-import com.joker.apostas.dtos.SignUpDto;
-import com.joker.apostas.dtos.UserDto;
+import com.joker.apostas.dto.CredentialsDto;
+import com.joker.apostas.dto.SignUpDto;
+import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.model.User;
 import com.joker.apostas.exception.AppException;
 import com.joker.apostas.mapper.UserMapper;
 import com.joker.apostas.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +21,16 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService{
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private final UserMapper userMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     public UserDto login(CredentialsDto credentialsDto) {
         String identifier = credentialsDto.getIdentifier(); // either username or email
@@ -57,10 +64,15 @@ public class UserService {
         return userMapper.toUserDto(savedUser);
     }
 
-    public UserDto findByUsername(String login) {
-        User user = userRepository.findByUsername(login)
-                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
-        return userMapper.toUserDto(user);
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    public UserDto getUserDto(String username) {
+                User user = loadUserByUsername(username);
+        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRole());
     }
 
 }

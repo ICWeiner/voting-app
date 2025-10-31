@@ -1,6 +1,5 @@
-package com.joker.apostas.dtos;
+package com.joker.apostas.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,17 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SignUpDto {
+public class UserDto {
 
-    @NotEmpty
+    private Long id;
     private String username;
-
-    @NotEmpty
     private String email;
-
-    @NotEmpty
-    private char[] password;
-
+    private String token;
     private String role;
 
 }

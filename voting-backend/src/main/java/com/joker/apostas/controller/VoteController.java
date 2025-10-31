@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 
@@ -24,10 +24,12 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/vote")
+@RequestMapping("/vote")
 @CrossOrigin(origins = "http://localhost:5173") // or "*"
 public class VoteController {
-    private final VoteRepository voteRepository;
+
+    @Autowired
+    private VoteRepository voteRepository;
 
     private static final Logger log = LoggerFactory.getLogger(VoteController.class);
 

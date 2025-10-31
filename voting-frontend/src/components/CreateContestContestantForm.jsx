@@ -59,7 +59,7 @@ const CreateContestContestantForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const contestRes = await fetch("http://localhost:8000/api/contests/create", {
+      const contestRes = await fetch("http://localhost:8000/contests/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...contest, prize: contest.prize !== "" ? Number(contest.prize) : null }),
@@ -67,27 +67,27 @@ const CreateContestContestantForm = () => {
       const contestData = await contestRes.json();
       const contestId = contestData.id;
 
-      const contestant1Res = await fetch("http://localhost:8000/api/contestants/create", {
+      const contestant1Res = await fetch("http://localhost:8000/contestants/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...contestant1, age: contestant1.age !== "" ? Number(contestant1.age) : null, studies: contestant1.studies || null }),
       });
       const contestant1Data = await contestant1Res.json();
 
-      await fetch("http://localhost:8000/api/contest-contestants/create", {
+      await fetch("http://localhost:8000/contest-contestants/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contestId, contestantId: contestant1Data.id, isSuperJoker: false }),
       });
 
-      const contestant2Res = await fetch("http://localhost:8000/api/contestants/create", {
+      const contestant2Res = await fetch("http://localhost:8000/contestants/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...contestant2, age: contestant2.age !== "" ? Number(contestant2.age) : null, studies: contestant2.studies || null }),
       });
       const contestant2Data = await contestant2Res.json();
 
-      await fetch("http://localhost:8000/api/contest-contestants/create", {
+      await fetch("http://localhost:8000/contest-contestants/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contestId, contestantId: contestant2Data.id, isSuperJoker: true }),

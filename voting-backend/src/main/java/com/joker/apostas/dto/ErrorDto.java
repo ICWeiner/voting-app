@@ -1,4 +1,4 @@
-package com.joker.apostas.dtos;
+package com.joker.apostas.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

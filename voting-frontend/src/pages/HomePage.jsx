@@ -7,7 +7,7 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/contests")
+    fetch("http://localhost:8000/contests")
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -23,7 +23,7 @@ export default function HomePage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Tem certeza que quer eliminar este concurso e respetivos concorrentes?")) return; //TODO improve error and success messages
     try {
-      const res = await fetch(`http://localhost:8000/api/contests/delete/${id}`, {
+      const res = await fetch(`http://localhost:8000/contests/delete/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Erro ao eliminar concurso");

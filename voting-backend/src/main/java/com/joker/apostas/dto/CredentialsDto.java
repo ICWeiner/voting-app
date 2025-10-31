@@ -1,4 +1,4 @@
-package com.joker.apostas.dtos;
+package com.joker.apostas.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 

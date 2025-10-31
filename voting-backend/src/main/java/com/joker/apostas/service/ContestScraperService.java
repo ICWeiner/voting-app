@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joker.apostas.model.Contest;
 import com.joker.apostas.repository.ContestRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.jsoup.Jsoup;
@@ -15,8 +17,11 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class ContestScraperService {
 
-    private final ContestRepository contestRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ContestRepository contestRepository;
+    
+    @Autowired
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public ContestScraperService(ContestRepository contestRepository) {
         this.contestRepository = contestRepository;

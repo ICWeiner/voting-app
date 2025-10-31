@@ -13,7 +13,7 @@ function VotePage() {
     if (!option) return;
 
     try {
-      request('post', '/api/vote', { option });
+      request('post', '/vote', { option });
       setSubmitted(true);
     } catch (err) {
       console.error(err);
@@ -23,7 +23,7 @@ function VotePage() {
 
   const fetchResults = async () => {
     try {
-      const res = request('get', '/api/vote/today');
+      const res = request('get', '/vote/today');
       setResults(res.data);
     } catch (err) {
       console.error(err);

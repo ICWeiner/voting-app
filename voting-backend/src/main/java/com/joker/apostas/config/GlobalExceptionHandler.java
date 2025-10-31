@@ -1,20 +1,18 @@
 package com.joker.apostas.config;
 
-import com.joker.apostas.dto.ErrorDto;
 import com.joker.apostas.exception.AppException;
+import com.joker.apostas.dto.ErrorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
-public class RestExceptionHandler {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = { AppException.class })
-    @ResponseBody
-    public ResponseEntity<ErrorDto> handleException(AppException ex) {
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ErrorDto> handleAppException(AppException ex) {
         return ResponseEntity
                 .status(ex.getStatus())
-                .body(ErrorDto.builder().message(ex.getMessage()).build());
+                .body(new ErrorDto(ex.getMessage()));
     }
 }

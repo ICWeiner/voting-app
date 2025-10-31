@@ -1,7 +1,7 @@
 package com.joker.apostas.mapper;
 
-import com.joker.apostas.dtos.SignUpDto;
-import com.joker.apostas.dtos.UserDto;
+import com.joker.apostas.dto.SignUpDto;
+import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

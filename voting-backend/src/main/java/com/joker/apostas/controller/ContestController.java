@@ -15,9 +15,9 @@ public class ContestController {
             this.contestRepository = contestRepository;
         }
 
-        @GetMapping("/api/contests")
-            public List<Contest> getAllContests() {
-                return contestRepository.findAll();
+        @GetMapping("/contests")
+        public List<Contest> getAllContests() {
+            return contestRepository.findAll();
         }
 
 }

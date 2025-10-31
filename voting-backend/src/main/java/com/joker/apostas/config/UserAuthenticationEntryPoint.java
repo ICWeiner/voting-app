@@ -1,7 +1,7 @@
 package com.joker.apostas.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joker.apostas.dtos.ErrorDto;
+import com.joker.apostas.dto.ErrorDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
