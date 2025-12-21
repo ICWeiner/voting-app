@@ -11,22 +11,21 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContestContestantId implements Serializable {
+public class ContestPresenterId implements Serializable {
 
     private Long contestId;
-    private Long contestantId;
+    private Long presenterId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ContestContestantId that = (ContestContestantId) o;
+        if (!(o instanceof ContestPresenterId that)) return false;
         return Objects.equals(contestId, that.contestId)
-                && Objects.equals(contestantId, that.contestantId);
+                && Objects.equals(presenterId, that.presenterId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contestId, contestantId);
+        return Objects.hash(contestId, presenterId);
     }
 }

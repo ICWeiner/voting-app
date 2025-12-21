@@ -1,6 +1,7 @@
 package com.joker.apostas.service;
 
 import com.joker.apostas.model.Vote;
+import com.joker.apostas.model.enums.VoteChoice;
 import com.joker.apostas.repository.VoteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class VoteService {
         return repo.findAll();
     }
 
-    public Map<String, Long> getToday() {
+    public Map<VoteChoice, Long> getToday() {
         return repo.findAll().stream()
-                .collect(Collectors.groupingBy(Vote::getOption, Collectors.counting()));
+                .collect(Collectors.groupingBy(Vote::getVoteChoice, Collectors.counting()));
     }
 }

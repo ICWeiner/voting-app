@@ -1,33 +1,36 @@
 package com.joker.apostas.model;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.joker.apostas.model.id.ContestContestantId;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "contestcontestant")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContestContestant {
 
-    @EmbeddedId
-    private ContestContestantId id;
+    @EmbeddedId private ContestContestantId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("contestId")
-    @JoinColumn(name = "contestid")
-    @JsonBackReference("contest-contestants")
+    @JoinColumn(name = "contest_id")
+    @JsonBackReference("contest-contestants") // TODO: why is this here?
     private Contest contest;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("contestantId")
-    @JoinColumn(name = "contestantid")
-    @JsonManagedReference("contestant-contests")
+    @JoinColumn(name = "contestant_id")
+    @JsonManagedReference("contestant-contests") // TODO: why is this here?
     private Contestant contestant;
 
-    @Column(name = "issuperjoker", nullable = false)
+    @Column(name = "is_super_joker", nullable = false)
     private Boolean isSuperJoker;
-
-    public ContestContestant() {}
 
     public ContestContestant(Contest contest, Contestant contestant, Boolean isSuperJoker) {
         this.contest = contest;
@@ -35,15 +38,4 @@ public class ContestContestant {
         this.isSuperJoker = isSuperJoker;
         this.id = new ContestContestantId(contest.getId(), contestant.getId());
     }
-
-    // Getters & Setters
-    public ContestContestantId getId() { return id; }
-    public Contest getContest() { return contest; }
-    public Contestant getContestant() { return contestant; }
-    public Boolean getIsSuperJoker() { return isSuperJoker; }
-
-    public void setId(ContestContestantId id) { this.id = id; }
-    public void setContest(Contest contest) { this.contest = contest; }
-    public void setContestant(Contestant contestant) { this.contestant = contestant; }
-    public void setIsSuperJoker(Boolean isSuperJoker) { this.isSuperJoker = isSuperJoker; }
 }

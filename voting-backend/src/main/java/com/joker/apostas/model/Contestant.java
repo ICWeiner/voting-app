@@ -6,9 +6,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.joker.apostas.model.enums.StudiesType;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "contestant")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Contestant {
 
     @Id
@@ -25,7 +30,7 @@ public class Contestant {
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "studies")
+    @Column(name = "studies", columnDefinition = "studies_type")
     @Enumerated(EnumType.STRING)
     private StudiesType studies;
 
@@ -35,31 +40,4 @@ public class Contestant {
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.ALL)
     @JsonBackReference("contestant-contests")
     private List<ContestContestant> contestContestants;
-
-    public Contestant() {}
-
-    public Contestant(String name, String profession, Integer age, StudiesType studies, String notes) {
-        this.name = name;
-        this.profession = profession;
-        this.age = age;
-        this.studies = studies;
-        this.notes = notes;
-    }
-
-    // Getters & Setters
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getProfession() { return profession; }
-    public Integer getAge() { return age; }
-    public StudiesType getStudies() { return studies; }
-    public String getNotes() { return notes; }
-    public List<ContestContestant> getContestContestants() { return contestContestants; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setProfession(String profession) { this.profession = profession; }
-    public void setAge(Integer age) { this.age = age; }
-    public void setStudies(StudiesType studies) { this.studies = studies; }
-    public void setNotes(String notes) { this.notes = notes; }
-    public void setContestContestants(List<ContestContestant> contestContestants) { this.contestContestants = contestContestants; }
 }
