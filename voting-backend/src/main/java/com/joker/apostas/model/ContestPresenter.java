@@ -16,8 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ContestPresenter {
 
-    @EmbeddedId
-    private ContestPresenterId id;
+    @EmbeddedId private ContestPresenterId id;
 
     @MapsId("contestId")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +37,6 @@ public class ContestPresenter {
         this.contest = contest;
         this.presenter = presenter;
         this.notes = notes;
-        this.id = new ContestPresenterId(contest.getId(),presenter.getId());
+        this.id = new ContestPresenterId(contest.getId(), presenter.getId());
     }
 }

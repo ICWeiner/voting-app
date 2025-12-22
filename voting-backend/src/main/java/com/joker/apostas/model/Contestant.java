@@ -18,10 +18,10 @@ public class Contestant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "contestantid")
+    @Column(name = "contestant_id")
     private Long id;
 
-    @Column(name = "contestantname", length = 100)
+    @Column(name = "contestant_name", length = 100)
     private String name;
 
     @Column(name = "profession", length = 100)
@@ -30,7 +30,7 @@ public class Contestant {
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "studies", columnDefinition = "studies_type")
+    @Column(name = "studies", columnDefinition="studies_type")
     @Enumerated(EnumType.STRING)
     private StudiesType studies;
 

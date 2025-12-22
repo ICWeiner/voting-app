@@ -35,11 +35,11 @@ public class User implements UserDetails {
     @Size(max = 100)
     private String email;
 
-    @Column(name = "passwordhash", nullable = false, length = 250)
+    @Column(name = "password_hash", nullable = false, length = 250)
     private String password; // BCrypt hashed
 
     // "USER" or "ADMIN"
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", nullable = false, columnDefinition = "user_role")
     @Enumerated(EnumType.STRING)
     private UserType role;
 

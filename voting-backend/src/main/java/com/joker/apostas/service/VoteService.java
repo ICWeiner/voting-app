@@ -13,8 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class VoteService {
 
-    @Autowired
-    private VoteRepository repo;
+    @Autowired private VoteRepository repo;
 
     public VoteService(VoteRepository repo) {
         this.repo = repo;

@@ -1,17 +1,21 @@
 spring:
-  profiles: local
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgres.home.lan:5432/${POSTGRES_DB}
+    url: jdbc:postgresql://${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    # Flyway will look for migrations in src/main/resources/db/migration
+    locations: classpath:db/migration
 
   h2:
     console:

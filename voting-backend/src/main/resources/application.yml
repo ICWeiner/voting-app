@@ -1,6 +1,8 @@
 spring:
   application:
     name: apostas
+  profiles:
+    active: local
 
   config:
     import: optional:file:.env[.properties]
@@ -14,10 +16,16 @@ server:
 app:
   jwt:
     secret: ${JWT_SECRET}
-    expiration-seconds: 36000
+    expiration-seconds: ${JWT_DURATION_SECONDS}
 
 management:
   endpoints:
     web:
-      exposure:
-        include: "*"
+  endpoint:
+    health:
+      show-details: when-authorized
+    secret: ${JWT_SECRET}
+    expiration-seconds: 36000
+  level:
+    com.joker.apostas: INFO
+

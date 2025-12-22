@@ -17,17 +17,15 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class ContestScraperService {
 
-    @Autowired
-    private ContestRepository contestRepository;
-    
-    @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired private ContestRepository contestRepository;
+
+    @Autowired private ObjectMapper objectMapper = new ObjectMapper();
 
     public ContestScraperService(ContestRepository contestRepository) {
         this.contestRepository = contestRepository;
     }
 
-    //TEST 10 seconds -> @Scheduled(cron = "*/10 * * * * ?") 
+    // TEST 10 seconds -> @Scheduled(cron = "*/10 * * * * ?")
     @Scheduled(cron = "0 0 6 * * ?")
     public void fetchContestDate() {
         try {
@@ -37,10 +35,7 @@ public class ContestScraperService {
 
             System.out.println("Running scheduler at " + now + ", fetching URL: " + url);
 
-            String json = Jsoup.connect(url)
-                    .ignoreContentType(true)
-                    .execute()
-                    .body();
+            String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
 
             JsonNode root = objectMapper.readTree(json);
             JsonNode scheduleRoot = root.path("result"); // <-- was "schedule"
@@ -55,16 +50,27 @@ public class ContestScraperService {
                         String name = program.path("name").asText();
                         String episodeTitle = program.path("episode").path("title").asText();
 
-                        if (name.toLowerCase().contains("joker") || episodeTitle.toLowerCase().contains("joker")) {
+                        if (name.toLowerCase().contains("joker")
+                                || episodeTitle.toLowerCase().contains("joker")) {
 
                             String startDateTimeStr = program.path("date").asText();
-                            LocalDateTime startDateTime = LocalDateTime.parse(startDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                            LocalDateTime startDateTime =
+                                    LocalDateTime.parse(
+                                            startDateTimeStr,
+                                            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
                             Contest contest = new Contest();
-                            contest.setTitle(!episodeTitle.isBlank() ? episodeTitle : name); //TODO add episode number
+                            contest.setTitle(
+                                    !episodeTitle.isBlank()
+                                            ? episodeTitle
+                                            : name); // TODO add episode number
                             contest.setStartDateTime(startDateTime);
                             contestRepository.save(contest);
-                            System.out.println("New contest saved: " + contest.getTitle() + " at " + startDateTime);
+                            System.out.println(
+                                    "New contest saved: "
+                                            + contest.getTitle()
+                                            + " at "
+                                            + startDateTime);
                             found = true;
                         }
                     }
@@ -74,7 +80,6 @@ public class ContestScraperService {
             if (!found) {
                 System.out.println("No relevant contest found in afternoon or evening.");
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -26,10 +26,10 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserAuthenticationProvider customUserAuthenticationProvider;
-    
+
     @Autowired
     private JwtService jwtService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .authenticationProvider(customUserAuthenticationProvider) // ✅ use for username/password login
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); 
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

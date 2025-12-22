@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Presenter {
+public class Presenter { // TODO: why do we need a presenter?
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

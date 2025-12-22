@@ -2,9 +2,12 @@ package com.joker.apostas.model;
 
 import com.joker.apostas.model.enums.VoteChoice;
 import com.joker.apostas.model.enums.VoteChoiceConverter;
+
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -31,11 +34,12 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contest_id")
     private Contest contest;
-
+    
     @Convert(converter = VoteChoiceConverter.class)
     @Column(name = "vote_choice", nullable = false, columnDefinition = "vote_choice")
+    @Enumerated(EnumType.STRING)
     private VoteChoice voteChoice;
 
     @Column(name = "vote_date_time", insertable = false, updatable = false)
-    private LocalDate date;
+    private LocalDateTime date;
 }
