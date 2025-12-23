@@ -6,6 +6,8 @@ import com.joker.apostas.model.enums.VoteChoiceConverter;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -38,6 +40,7 @@ public class Vote {
     @Convert(converter = VoteChoiceConverter.class)
     @Column(name = "vote_choice", nullable = false, columnDefinition = "vote_choice")
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private VoteChoice voteChoice;
 
     @Column(name = "vote_date_time", insertable = false, updatable = false)

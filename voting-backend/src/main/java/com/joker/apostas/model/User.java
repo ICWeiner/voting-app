@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,6 +43,7 @@ public class User implements UserDetails {
     // "USER" or "ADMIN"
     @Column(name = "role", nullable = false, columnDefinition = "user_role")
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private UserType role;
 
     @Override

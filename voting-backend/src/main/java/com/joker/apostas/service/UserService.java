@@ -1,6 +1,6 @@
 package com.joker.apostas.service;
 
-import com.joker.apostas.dto.CredentialsDto;
+import com.joker.apostas.dto.LoginDto;
 import com.joker.apostas.dto.SignUpDto;
 import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.exception.AppException;
@@ -30,8 +30,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired private UserMapper userMapper;
 
-    public UserDto login(CredentialsDto credentialsDto) {
-        String identifier = credentialsDto.getIdentifier(); // either username or email
+    public UserDto login(LoginDto loginDto) {
+        String identifier = loginDto.getIdentifier(); // either username or email
 
         // Try finding by username first, then by email
         User user =
@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
                                 () -> new AppException("User not found", HttpStatus.NOT_FOUND));
 
         if (!passwordEncoder.matches(
-                CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
+                CharBuffer.wrap(loginDto.getPassword()), user.getPassword())) {
             throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
         }
 
         User user = userMapper.signUpToUser(signUpDto);
-        user.setRole(UserType.REGULAR); // Default role for new users
+        user.setRole(UserType.USER); // Default role for new users
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(signUpDto.getPassword())));
 
         User savedUser = userRepository.save(user);

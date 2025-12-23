@@ -1,6 +1,5 @@
 package com.joker.apostas.security;
 
-import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.model.User;
 import com.joker.apostas.service.UserService;
 import lombok.RequiredArgsConstructor;

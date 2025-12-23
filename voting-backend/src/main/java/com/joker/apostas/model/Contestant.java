@@ -7,6 +7,8 @@ import com.joker.apostas.model.enums.StudiesType;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "contestant")
@@ -32,6 +34,7 @@ public class Contestant {
 
     @Column(name = "studies", columnDefinition="studies_type")
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private StudiesType studies;
 
     @Column(name = "notes")

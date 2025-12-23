@@ -1,20 +1,20 @@
 package com.joker.apostas.controller;
 
-import com.joker.apostas.dto.CredentialsDto;
+
+import com.joker.apostas.dto.LoginDto;
 import com.joker.apostas.dto.SignUpDto;
 import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.service.JwtService;
 import com.joker.apostas.service.UserService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
@@ -29,8 +29,8 @@ public class AuthController {
     private JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
-        UserDto userDto = userService.login(credentialsDto);
+    public ResponseEntity<UserDto> login(@RequestBody @Valid LoginDto loginDto) {
+        UserDto userDto = userService.login(loginDto);
         userDto.setToken(jwtService.createToken(userDto.getUsername()));
         return ResponseEntity.ok(userDto);
     }

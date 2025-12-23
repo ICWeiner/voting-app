@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  title: Voting App API
+  description: REST API for voting application with authentication, contests, and voting
+  version: 0.0.1
+  contact:
+    name: Joker API Support
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticates a user with credentials and returns a JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful, returns user info with JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Bad request - missing or invalid body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/register:
+    post:
+      summary: User registration
+      description: Creates a new user account and returns a JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpDto'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Bad request - missing or invalid body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    LoginDto:
+      type: object
+      description: User login credentials
+      required:
+        - identifier
+        - password
+      properties:
+        identifier:
+          type: string
+          description: Unique username or email
+          minLength: 3
+          example: johndoe(@mail.com)
+        password:
+          type: string
+          format: password
+          description: User password
+          minLength: 8
+          example: password123
+
+    SignUpDto:
+      type: object
+      description: User registration data
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Unique username
+          minLength: 3
+        email:
+          type: string
+          description: Unique email
+          format: email
+        password:
+          type: string
+          format: password
+          description: User password
+          minLength: 8
+          example: password123
+
+    UserDto:
+      type: object
+      description: User information with authentication token
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User unique identifier
+          example: 1
+        username:
+          type: string
+          description: Username
+          minLength: 3
+          example: johndoe
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: john@example.com
+        role:
+          type: string
+          description: User role
+          example: USER
+        token:
+          type: string
+          description: JWT authentication token (write-only)
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    ErrorResponse:
+      type: object
+      description: Error response
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Validation failed"
+        message:
+          type: string
+          description: Additional error details
+          example: "Username is required"
+      additionalProperties: true

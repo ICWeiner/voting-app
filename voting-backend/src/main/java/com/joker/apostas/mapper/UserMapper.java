@@ -22,6 +22,6 @@ public interface UserMapper {
 
     @Named("userTypeToString")
     default String userTypeToString(UserType userType) {
-        return userType != null ? userType.toString() : "REGULAR";
+        return userType != null ? userType.toString() : "USER";
     }
 }
