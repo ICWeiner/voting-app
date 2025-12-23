@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env 
+apostas.iml
 
 ### STS ###
 .apt_generated
