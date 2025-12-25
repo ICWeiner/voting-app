@@ -1,11 +1,12 @@
 package com.joker.apostas.model;
 
-import com.joker.apostas.model.enums.VoteChoice;
+import com.joker.apostas.dto.VoteChoice;
 import com.joker.apostas.model.enums.VoteChoiceConverter;
 
 import jakarta.persistence.*;
 
 import lombok.*;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -36,7 +37,7 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contest_id")
     private Contest contest;
-    
+
     @Convert(converter = VoteChoiceConverter.class)
     @Column(name = "vote_choice", nullable = false, columnDefinition = "vote_choice")
     @Enumerated(EnumType.STRING)

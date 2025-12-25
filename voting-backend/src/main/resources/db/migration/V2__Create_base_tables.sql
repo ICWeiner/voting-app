@@ -26,5 +26,6 @@ CREATE TABLE Contest (
     description TEXT,
     start_date_time TIMESTAMP,
     end_date_time TIMESTAMP,
-    prize INT
+    prize INT,
+    status contest_status NOT NULL DEFAULT 'UPCOMING'
 );

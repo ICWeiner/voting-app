@@ -1,5 +1,7 @@
 package com.joker.apostas.model.enums;
 
+import com.joker.apostas.dto.VoteChoice;
+
 import jakarta.persistence.AttributeConverter;
 
 public class VoteChoiceConverter implements AttributeConverter<VoteChoice, String> {

@@ -35,19 +35,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
         '401':
           description: Unauthorized - invalid credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
 
   /auth/register:
     post:
@@ -73,19 +73,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
         '409':
           description: Conflict - user already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponseDto'
 
 components:
   schemas:
@@ -168,7 +168,53 @@ components:
           description: JWT authentication token (write-only)
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-    ErrorResponse:
+    VoteRequestDto:
+      type: object
+      required:
+        - voteChoice
+      properties:
+        VoteChoice:
+          $ref: '#/components/schemas/VoteChoice'
+
+    VoteChoice:
+      type: string
+      enum:
+        - "V0"
+        - "V200"
+        - "V500"
+        - "V1000"
+        - "V3000"
+        - "V10000"
+        - "V50000"
+      description: The selected outcome.
+
+    ContestStatsDto:
+      type: object
+      properties:
+        contestId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/ContestStatus'
+        totalVotes:
+          type: integer
+          format: int64
+        results:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+
+    ContestStatus:
+      type: string
+      enum:
+        - OPEN
+        - CLOSED
+        - UPCOMING
+
+    ErrorResponseDto:
       type: object
       description: Error response
       properties:

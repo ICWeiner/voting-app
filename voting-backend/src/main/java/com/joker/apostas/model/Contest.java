@@ -1,14 +1,20 @@
 package com.joker.apostas.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.joker.apostas.dto.ContestStatus;
+
+import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "contest")
@@ -37,6 +43,11 @@ public class Contest {
 
     @Column(name = "prize")
     private Integer prize;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "contest_status")
+    private ContestStatus status;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("contest-contestants")

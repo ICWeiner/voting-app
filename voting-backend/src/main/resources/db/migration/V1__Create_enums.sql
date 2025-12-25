@@ -19,4 +19,9 @@ CREATE TYPE studies_type AS ENUM (
     'MASTER',
     'PHD'
 );
+CREATE TYPE contest_status AS ENUM (
+    'OPEN',
+    'CLOSED',
+    'UPCOMING'
+);
 SET timezone = 'Europe/Lisbon';
