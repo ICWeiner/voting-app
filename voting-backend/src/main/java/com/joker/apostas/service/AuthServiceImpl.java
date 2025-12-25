@@ -6,23 +6,22 @@ import com.joker.apostas.dto.UserDto;
 import com.joker.apostas.exception.AppException;
 import com.joker.apostas.mapper.UserMapper;
 import com.joker.apostas.model.User;
-import com.joker.apostas.model.enums.UserType;
+import com.joker.apostas.model.enums.Role;
 import com.joker.apostas.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.CharBuffer;
-
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Service
-public class UserService implements UserDetailsService {
+public class AuthServiceImpl implements AuthService{
 
     @Autowired private UserRepository userRepository;
 
@@ -33,22 +32,19 @@ public class UserService implements UserDetailsService {
     public UserDto login(LoginDto loginDto) {
         String identifier = loginDto.getIdentifier(); // either username or email
 
-        // Try finding by username first, then by email
-        User user =
-                userRepository
-                        .findByUsername(identifier)
-                        .or(() -> userRepository.findByEmail(identifier))
-                        .orElseThrow(
-                                () -> new AppException("User not found", HttpStatus.NOT_FOUND));
+        // Try finding by username and email
+        User user = userRepository.findByUsernameOrEmail(identifier, identifier)
+                .orElseThrow(() -> new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED));
 
         if (!passwordEncoder.matches(
-                CharBuffer.wrap(loginDto.getPassword()), user.getPassword())) {
+                loginDto.getPassword(), user.getPassword())) {
             throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
         return userMapper.toUserDto(user);
     }
 
+    @Transactional
     public UserDto register(SignUpDto signUpDto) {
         // Check if username already exists
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
@@ -61,18 +57,11 @@ public class UserService implements UserDetailsService {
         }
 
         User user = userMapper.signUpToUser(signUpDto);
-        user.setRole(UserType.USER); // Default role for new users
-        user.setPassword(passwordEncoder.encode(CharBuffer.wrap(signUpDto.getPassword())));
+        user.setRole(Role.USER); // Default role for new users
+        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 
         User savedUser = userRepository.save(user);
 
         return userMapper.toUserDto(savedUser);
-    }
-
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }

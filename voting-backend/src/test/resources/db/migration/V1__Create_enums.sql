@@ -2,7 +2,7 @@ CREATE TYPE user_role AS ENUM (
     'USER',
     'ADMIN'
 );
-CREATE DOMAIN vote_choice AS ENUM (
+CREATE TYPE vote_choice AS ENUM (
     'V0',
     'V200',
     'V500',
@@ -11,7 +11,7 @@ CREATE DOMAIN vote_choice AS ENUM (
     'V10000',
     'V50000'
 );
-CREATE DOMAIN studies_type AS ENUM (
+CREATE TYPE studies_type AS ENUM (
     'NONE',
     'PRIMARY',
     'SECONDARY',
@@ -19,3 +19,4 @@ CREATE DOMAIN studies_type AS ENUM (
     'MASTER',
     'PHD'
 );
+SET timezone = 'Europe/Lisbon';

@@ -1,6 +1,6 @@
 package com.joker.apostas.model;
 
-import com.joker.apostas.model.enums.UserType;
+import com.joker.apostas.model.enums.Role;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false, columnDefinition = "user_role")
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    private UserType role;
+    private Role role;
 
     @Override
     public String getPassword() {

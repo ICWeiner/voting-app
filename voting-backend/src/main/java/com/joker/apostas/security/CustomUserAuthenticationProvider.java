@@ -1,7 +1,7 @@
 package com.joker.apostas.security;
 
 import com.joker.apostas.model.User;
-import com.joker.apostas.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -19,33 +21,26 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private UserService userService;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private UserDetailsService userDetailsService;
+
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         // Load the user from your service
-        User user = userService.loadUserByUsername(username);
-        if (user == null) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
-
-        // Compare passwords
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
-
         // Return an authenticated token
         return new UsernamePasswordAuthenticationToken(
-                user,
+                userDetails,
                 null,
-                Collections.emptyList() // or authorities if you have roles
+                userDetails.getAuthorities()
         );
     }
 

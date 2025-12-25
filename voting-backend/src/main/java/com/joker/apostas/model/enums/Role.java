@@ -1,6 +1,6 @@
 package com.joker.apostas.model.enums;
 
-public enum UserType {
+public enum Role {
     ADMIN,
     USER
 }

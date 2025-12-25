@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO review and create interface
 @Service
-public class VoteService {
+public class VoteServiceImpl {
 
     @Autowired private VoteRepository repo;
 
-    public VoteService(VoteRepository repo) {
+    public VoteServiceImpl(VoteRepository repo) {
         this.repo = repo;
     }
 

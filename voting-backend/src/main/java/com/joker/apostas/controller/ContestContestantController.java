@@ -1,5 +1,6 @@
 package com.joker.apostas.controller;
 
+import com.joker.apostas.service.ContestContestantService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,14 +17,14 @@ import com.joker.apostas.model.Contest;
 import com.joker.apostas.model.ContestContestant;
 import com.joker.apostas.model.Contestant;
 import com.joker.apostas.model.id.ContestContestantId;
-import com.joker.apostas.service.ContestContestantService;
+import com.joker.apostas.service.ContestContestantServiceImpl;
 
 @RestController
 @RequestMapping("/api")
 public class ContestContestantController {
     private final ContestContestantService contestContestantService;
 
-        public ContestContestantController(ContestContestantService contestContestantService) {
+        public ContestContestantController(ContestContestantServiceImpl contestContestantService) {
             this.contestContestantService = contestContestantService;
         }
 
