@@ -19,20 +19,24 @@ import java.util.Base64;
 import java.util.Date;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
-public class JwtServiceImpl implements JwtService{
+public class JwtServiceImpl implements JwtService {
 
     @Value("${app.jwt.secret}")
-    private String secretKey;
+    private final String secretKey;
 
     @Value("${app.jwt.expiration-seconds:3600}")
-    private long expirationSeconds;
+    private final long expirationSeconds;
 
-    @PostConstruct
-    protected void init() {
-        // Encode the secret key in Base64 to avoid having the raw secret in memory
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    // Constructor to initialize final fields, without lombok @RequiredArgsConstructor because of secret handling
+    public JwtServiceImpl(
+            @Value("${app.jwt.secret}") String secretKey,
+            @Value("${app.jwt.expiration-seconds:3600}") long expirationSeconds) {
+
+        // Transform the secret IMMEDIATELY.
+        // The raw 'secretKey' argument exists only during this constructor call.
+        this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        this.expirationSeconds = expirationSeconds;
     }
 
     /** Creates a JWT token for the given username */

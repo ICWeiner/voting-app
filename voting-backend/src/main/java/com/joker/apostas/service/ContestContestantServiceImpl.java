@@ -13,19 +13,20 @@ import com.joker.apostas.repository.ContestantRepository;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 @Transactional
-public class ContestContestantServiceImpl implements ContestContestantService{
+public class ContestContestantServiceImpl implements ContestContestantService {
 
-    @Autowired private ContestRepository contestRepository;
+    private final ContestRepository contestRepository;
 
-    @Autowired private ContestantRepository contestantRepository;
+    private final ContestantRepository contestantRepository;
 
-    @Autowired private ContestContestantRepository contestContestantRepository;
-
+    private final ContestContestantRepository contestContestantRepository;
 
     public Contest getContestById(Long id) {
         return contestRepository

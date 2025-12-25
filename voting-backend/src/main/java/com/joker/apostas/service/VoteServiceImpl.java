@@ -4,21 +4,19 @@ import com.joker.apostas.model.Vote;
 import com.joker.apostas.model.enums.VoteChoice;
 import com.joker.apostas.repository.VoteRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-//TODO review and create interface
+// TODO review and create interface
+@RequiredArgsConstructor
 @Service
 public class VoteServiceImpl {
 
-    @Autowired private VoteRepository repo;
-
-    public VoteServiceImpl(VoteRepository repo) {
-        this.repo = repo;
-    }
+    private final VoteRepository repo;
 
     public Vote save(Vote vote) {
         return repo.save(vote);

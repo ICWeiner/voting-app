@@ -14,12 +14,7 @@ public class JwtServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        jwtService = new JwtServiceImpl();
-        // Manually inject values since there's no Spring Context in a Unit Test
-        ReflectionTestUtils.setField(
-                jwtService, "secretKey", "testSecretKeyForJwtTesting1234567890");
-        ReflectionTestUtils.setField(jwtService, "expirationSeconds", 3600L);
-        jwtService.init();
+        jwtService = new JwtServiceImpl("testSecretKeyForJwtTesting1234567890", 3600L);
     }
 
     @Test

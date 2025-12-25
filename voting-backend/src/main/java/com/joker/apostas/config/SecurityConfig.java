@@ -1,9 +1,10 @@
 package com.joker.apostas.config;
 
 import com.joker.apostas.security.CustomUserAuthenticationProvider;
-
 import com.joker.apostas.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,16 +18,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired private UserAuthenticationEntryPoint userAuthenticationEntryPoint;
+    private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
 
-    @Autowired private CustomUserAuthenticationProvider customUserAuthenticationProvider;
+    private final CustomUserAuthenticationProvider customUserAuthenticationProvider;
 
-    @Autowired private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

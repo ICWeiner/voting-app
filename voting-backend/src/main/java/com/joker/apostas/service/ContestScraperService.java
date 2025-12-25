@@ -5,25 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joker.apostas.model.Contest;
 import com.joker.apostas.repository.ContestRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
+import org.jsoup.Jsoup;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@RequiredArgsConstructor
 @Service
 public class ContestScraperService {
 
-    @Autowired private ContestRepository contestRepository;
+    private final ContestRepository contestRepository;
 
-    @Autowired private ObjectMapper objectMapper = new ObjectMapper();
-
-    public ContestScraperService(ContestRepository contestRepository) {
-        this.contestRepository = contestRepository;
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // TEST 10 seconds -> @Scheduled(cron = "*/10 * * * * ?")
     @Scheduled(cron = "0 0 6 * * ?")

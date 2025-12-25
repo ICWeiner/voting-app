@@ -14,7 +14,7 @@ server:
 app:
   jwt:
     secret: ${JWT_SECRET}
-    expiration-seconds: 36000
+    expiration-seconds: ${JWT_DURATION_SECONDS}
 
 management:
   endpoints:

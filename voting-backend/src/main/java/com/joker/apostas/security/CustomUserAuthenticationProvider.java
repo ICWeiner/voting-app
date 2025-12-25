@@ -1,10 +1,8 @@
 package com.joker.apostas.security;
 
-import com.joker.apostas.model.User;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,15 +13,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
 @Component
 @RequiredArgsConstructor
 public class CustomUserAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication)
@@ -38,10 +34,7 @@ public class CustomUserAuthenticationProvider implements AuthenticationProvider 
         }
         // Return an authenticated token
         return new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
+                userDetails, null, userDetails.getAuthorities());
     }
 
     @Override

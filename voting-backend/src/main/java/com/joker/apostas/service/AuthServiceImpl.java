@@ -9,10 +9,8 @@ import com.joker.apostas.model.User;
 import com.joker.apostas.model.enums.Role;
 import com.joker.apostas.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,18 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired private JwtService jwtService;
+    private final JwtService jwtService;
 
     private static final Set<String> RESERVED_WORDS =
             Set.of("admin", "support", "root", "system", "administrator", "null", "undefined");
