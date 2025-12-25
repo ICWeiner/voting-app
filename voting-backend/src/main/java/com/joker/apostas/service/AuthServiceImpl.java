@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @NoArgsConstructor
 @AllArgsConstructor
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Autowired private UserRepository userRepository;
 
@@ -29,19 +29,29 @@ public class AuthServiceImpl implements AuthService{
 
     @Autowired private UserMapper userMapper;
 
+    @Autowired private JwtService jwtService;
+
     public UserDto login(LoginDto loginDto) {
         String identifier = loginDto.getIdentifier(); // either username or email
 
         // Try finding by username and email
-        User user = userRepository.findByUsernameOrEmail(identifier, identifier)
-                .orElseThrow(() -> new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED));
+        User user =
+                userRepository
+                        .findByUsernameOrEmail(identifier, identifier)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                "Invalid credentials", HttpStatus.UNAUTHORIZED));
 
-        if (!passwordEncoder.matches(
-                loginDto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
-        return userMapper.toUserDto(user);
+        UserDto userDto = userMapper.toUserDto(user);
+        // Generate the token here
+        userDto.setToken(jwtService.createToken(user.getUsername()));
+
+        return userDto;
     }
 
     @Transactional
@@ -62,6 +72,9 @@ public class AuthServiceImpl implements AuthService{
 
         User savedUser = userRepository.save(user);
 
-        return userMapper.toUserDto(savedUser);
+        UserDto createdUser = userMapper.toUserDto(savedUser);
+        createdUser.setToken(jwtService.createToken(signUpDto.getUsername()));
+
+        return createdUser;
     }
 }

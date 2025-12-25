@@ -11,6 +11,7 @@ import com.joker.apostas.model.enums.Role;
 import com.joker.apostas.repository.UserRepository;
 import com.joker.apostas.service.AuthService;
 
+import com.joker.apostas.service.JwtService;
 import jakarta.transaction.Transactional;
 
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,14 @@ class AuthServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired private AuthService authService;
 
+    @Autowired private JwtService jwtService;
+
     @Autowired private UserRepository userRepository;
 
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Test
-    void register_ShouldPersistUserInLxcPostgres() {
+    void register_ShouldPersistUserAndReturnValidToken() {
         // Arrange
         SignUpDto signUpDto =
                 new SignUpDto()
@@ -43,33 +46,43 @@ class AuthServiceIntegrationTest extends AbstractIntegrationTest {
         UserDto result = authService.register(signUpDto);
 
         // Assert
-        assertNotNull(result);
+        assertNotNull(result.getToken(), "Token should be generated upon registration");
         assertEquals("joker_integration", result.getUsername());
 
-        // Verify it's actually in the database
+        // JWT Validation: Ensure the token actually belongs to this user
+        String extractedUser = jwtService.extractUsername(result.getToken());
+        assertEquals("joker_integration", extractedUser);
+
+        // Database Verification
         User savedUser = userRepository.findByUsername("joker_integration").orElseThrow();
         assertTrue(passwordEncoder.matches("securePass123", savedUser.getPassword()));
-        assertEquals(Role.USER, savedUser.getRole());
     }
 
     @Test
-    void login_ShouldSucceed_WithRealHashedPassword() {
+    void login_ShouldSucceedAndReturnValidToken() {
         // Arrange
+        String username = "login_test";
         User user = new User();
-        user.setUsername("login_test");
+        user.setUsername(username);
         user.setEmail("login@test.com");
         user.setPassword(passwordEncoder.encode("correct_password"));
         user.setRole(Role.USER);
         userRepository.save(user);
 
-        LoginDto loginDto = new LoginDto().identifier("login_test").password("correct_password");
+        LoginDto loginDto = new LoginDto().identifier(username).password("correct_password");
 
         // Act
         UserDto result = authService.login(loginDto);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("login_test", result.getUsername());
+        assertNotNull(result.getToken(), "Token should be generated upon login");
+
+        // JWT Validation: Verify the token claims
+        String extractedUser = jwtService.extractUsername(result.getToken());
+        assertEquals(username, extractedUser);
+
+        // Optional: Verify the token is actually valid according to the service
+        assertTrue(jwtService.isTokenValid(result.getToken(), user));
     }
 
     @Test

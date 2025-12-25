@@ -3,9 +3,8 @@ package com.joker.apostas.controller;
 import com.joker.apostas.dto.LoginDto;
 import com.joker.apostas.dto.SignUpDto;
 import com.joker.apostas.dto.UserDto;
-
 import com.joker.apostas.service.AuthService;
-import com.joker.apostas.service.JwtService;
+
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +22,15 @@ public class AuthController {
 
     @Autowired private AuthService authService;
 
-    @Autowired private JwtService jwtService;
-
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody @Valid LoginDto loginDto) {
         UserDto userDto = authService.login(loginDto);
-        userDto.setToken(jwtService.createToken(userDto.getUsername()));
         return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto signUpDto) {
         UserDto createdUser = authService.register(signUpDto);
-        createdUser.setToken(jwtService.createToken(signUpDto.getUsername()));
         return ResponseEntity.created(URI.create("/users/" + createdUser.getId()))
                 .body(createdUser);
     }
