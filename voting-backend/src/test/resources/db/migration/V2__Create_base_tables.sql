@@ -1,7 +1,7 @@
 CREATE TABLE Users (
     user_id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL,
-    email VARCHAR(250),
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(250) UNIQUE,
     password_hash VARCHAR(250) NOT NULL,
     role user_role NOT NULL DEFAULT 'USER'
 );

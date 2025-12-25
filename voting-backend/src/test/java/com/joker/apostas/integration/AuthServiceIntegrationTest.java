@@ -10,18 +10,15 @@ import com.joker.apostas.model.User;
 import com.joker.apostas.model.enums.Role;
 import com.joker.apostas.repository.UserRepository;
 import com.joker.apostas.service.AuthService;
-
 import com.joker.apostas.service.JwtService;
+
 import jakarta.transaction.Transactional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@ExtendWith(MockitoExtension.class)
 @Transactional
 class AuthServiceIntegrationTest extends AbstractIntegrationTest {
 
@@ -32,6 +29,60 @@ class AuthServiceIntegrationTest extends AbstractIntegrationTest {
     @Autowired private UserRepository userRepository;
 
     @Autowired private PasswordEncoder passwordEncoder;
+
+    @Test
+    void register_ShouldNormalizeUsernameAndEmail() {
+        // Arrange: Input has mixed case and spaces
+        SignUpDto signUpDto = new SignUpDto()
+                .username("  Joker_IT  ")
+                .email("  TEST@Mail.COM  ")
+                .password("securePass123");
+
+        // Act
+        UserDto result = authService.register(signUpDto);
+
+        // Assert
+        assertEquals("joker_it", result.getUsername());
+
+        User savedUser = userRepository.findByUsername("joker_it").orElseThrow();
+        assertEquals("test@mail.com", savedUser.getEmail());
+    }
+
+    @Test
+    void register_ShouldThrowException_WhenUsernameIsReserved() {
+        // Arrange
+        SignUpDto signUpDto = new SignUpDto()
+                .username("admin")
+                .email("admin@test.com")
+                .password("password123");
+
+        // Act & Assert
+        AppException ex = assertThrows(AppException.class, () -> authService.register(signUpDto));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+        assertTrue(ex.getMessage().contains("not allowed"));
+    }
+
+    @Test
+    void login_ShouldSucceed_WithMixedCaseIdentifier() {
+        // Arrange: Save a clean user
+        User user = new User();
+        user.setUsername("batman");
+        user.setEmail("bruce@wayne.com");
+        user.setPassword(passwordEncoder.encode("iambatman"));
+        user.setRole(Role.USER);
+        userRepository.save(user);
+
+        // Act: Login with messy input
+        LoginDto loginDto = new LoginDto()
+                .identifier("  BATMAN  ")
+                .password("iambatman");
+
+        UserDto result = authService.login(loginDto);
+
+        // Assert
+        assertNotNull(result.getToken());
+        assertEquals("batman", result.getUsername());
+    }
 
     @Test
     void register_ShouldPersistUserAndReturnValidToken() {

@@ -100,12 +100,14 @@ components:
           type: string
           description: Unique username or email
           minLength: 3
+          maxLength: 255
           example: johndoe(@mail.com)
         password:
           type: string
           format: password
           description: User password
           minLength: 8
+          maxLength: 100
           example: password123
 
     SignUpDto:
@@ -120,15 +122,22 @@ components:
           type: string
           description: Unique username
           minLength: 3
+          maxLength: 50
+          example: johndoe
+          pattern: '^[a-zA-Z0-9._-]+$'
         email:
           type: string
           description: Unique email
           format: email
+          example: johndoe@mail.com
+          minLength: 3
+          maxLength: 255
         password:
           type: string
           format: password
           description: User password
           minLength: 8
+          maxLength: 100
           example: password123
 
     UserDto:
