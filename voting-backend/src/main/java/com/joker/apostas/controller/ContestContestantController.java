@@ -1,7 +1,16 @@
 package com.joker.apostas.controller;
 
+import com.joker.apostas.dto.CreateContestContestantDto;
+import com.joker.apostas.dto.CreateContestDto;
+import com.joker.apostas.dto.CreateContestantDto;
+import com.joker.apostas.model.Contest;
+import com.joker.apostas.model.ContestContestant;
+import com.joker.apostas.model.Contestant;
+import com.joker.apostas.model.id.ContestContestantId;
 import com.joker.apostas.service.ContestContestantService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,19 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.joker.apostas.dto.CreateContestContestantDto;
-import com.joker.apostas.dto.CreateContestDto;
-import com.joker.apostas.dto.CreateContestantDto;
-import com.joker.apostas.model.Contest;
-import com.joker.apostas.model.ContestContestant;
-import com.joker.apostas.model.Contestant;
-import com.joker.apostas.model.id.ContestContestantId;
-import com.joker.apostas.service.ContestContestantServiceImpl;
-
-
-@RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
+@RequiredArgsConstructor
 public class ContestContestantController {
     private final ContestContestantService contestContestantService;
 

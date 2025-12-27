@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 @RestController
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;

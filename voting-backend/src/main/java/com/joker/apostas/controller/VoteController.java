@@ -12,16 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@RequiredArgsConstructor
-@RequestMapping("/vote")
 @CrossOrigin(origins = "http://localhost:5173") // or "*"
+@RequestMapping("/api/vote")
 @RestController
+@RequiredArgsConstructor
 public class VoteController {
 
     private final VoteService voteService;
@@ -29,7 +28,6 @@ public class VoteController {
     private static final Logger log = LoggerFactory.getLogger(VoteController.class);
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<VoteRequestDto> submitVote(
             @AuthenticationPrincipal User user, @RequestBody VoteRequestDto voteRequestDto) {
         log.info("User '{}' is submitting a vote", user.getUsername());
