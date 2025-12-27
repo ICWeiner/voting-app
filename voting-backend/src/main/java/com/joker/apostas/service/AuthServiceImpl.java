@@ -10,6 +10,7 @@ import com.joker.apostas.model.enums.Role;
 import com.joker.apostas.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,8 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
-@RequiredArgsConstructor
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
@@ -36,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     public UserDto login(LoginDto loginDto) {
         // 1. Normalize identifier
         String identifier = loginDto.getIdentifier().toLowerCase().trim();
+        log.debug("Attempting login for identifier: {}", identifier);
         ; // either username or email
 
         // 2. Find user by username or email
@@ -43,12 +46,17 @@ public class AuthServiceImpl implements AuthService {
                 userRepository
                         .findByUsernameOrEmail(identifier, identifier)
                         .orElseThrow(
-                                () ->
-                                        new AppException(
-                                                "Invalid credentials", HttpStatus.UNAUTHORIZED));
+                                () -> {
+                                    log.warn(
+                                            "Login failed: User not found for identifier '{}'",
+                                            identifier);
+                                    return new AppException(
+                                            "Invalid credentials", HttpStatus.UNAUTHORIZED);
+                                });
 
         // 3. Verify password
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            log.warn("Login failed: Password mismatch for user '{}'", user.getUsername());
             throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
 
@@ -65,32 +73,46 @@ public class AuthServiceImpl implements AuthService {
         signUpDto.setUsername(signUpDto.getUsername().toLowerCase().trim());
         signUpDto.setEmail(signUpDto.getEmail().toLowerCase().trim());
 
+        log.debug("Processing registration for username: {}", signUpDto.getUsername());
+
         // 2. Validate against reserved words
         if (RESERVED_WORDS.contains(signUpDto.getUsername())) {
+            log.warn(
+                    "Registration rejected: Username '{}' is a reserved word",
+                    signUpDto.getUsername());
             throw new AppException(
                     "Username '" + signUpDto.getUsername() + "' is not allowed",
                     HttpStatus.BAD_REQUEST);
         }
         String emailPrefix = signUpDto.getEmail().split("@")[0];
         if (RESERVED_WORDS.contains(emailPrefix)) {
+            log.warn("Registration rejected: Email prefix '{}' is a reserved word", emailPrefix);
             throw new AppException(
                     "Email prefix '" + emailPrefix + "' is not allowed", HttpStatus.BAD_REQUEST);
         }
 
         // 3. Check for existing username or email
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
+            log.warn(
+                    "Registration rejected: Username '{}' already exists", signUpDto.getUsername());
             throw new AppException("Username already exists", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.existsByEmail(signUpDto.getEmail())) {
+            log.warn("Registration rejected: Email '{}' already exists", signUpDto.getEmail());
             throw new AppException("Email already exists", HttpStatus.BAD_REQUEST);
         }
 
         // 4. Create and save new user
+        log.info("Creating new account for user '{}'", signUpDto.getUsername());
+
+        signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword())); // hash password
+
         User user = userMapper.signUpToUser(signUpDto);
         user.setRole(Role.USER); // Default role for new users
-        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 
         User savedUser = userRepository.save(user);
+
+        log.debug("User saved to database. ID: {}", savedUser.getId());
 
         UserDto createdUser = userMapper.toUserDto(savedUser);
         createdUser.setToken(jwtService.createToken(signUpDto.getUsername()));

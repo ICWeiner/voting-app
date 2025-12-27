@@ -4,11 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import jakarta.annotation.PostConstruct;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,8 @@ public class JwtServiceImpl implements JwtService {
     @Value("${app.jwt.expiration-seconds:3600}")
     private final long expirationSeconds;
 
-    // Constructor to initialize final fields, without lombok @RequiredArgsConstructor because of secret handling
+    // Constructor to initialize final fields, without lombok @RequiredArgsConstructor because of
+    // secret handling
     public JwtServiceImpl(
             @Value("${app.jwt.secret}") String secretKey,
             @Value("${app.jwt.expiration-seconds:3600}") long expirationSeconds) {
@@ -41,6 +41,7 @@ public class JwtServiceImpl implements JwtService {
 
     /** Creates a JWT token for the given username */
     public String createToken(String username) {
+        log.debug("Generating JWT for user: {}", username);
         try {
             Date now = new Date();
             Date validity =
@@ -48,16 +49,19 @@ public class JwtServiceImpl implements JwtService {
                             now.getTime()
                                     + (expirationSeconds
                                             * 1000)); // TODO validate that this multiplication is
-            // correct
 
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
-            return JWT.create()
-                    .withSubject(username)
-                    .withIssuedAt(now)
-                    .withExpiresAt(validity)
-                    .sign(algorithm);
+            String token =
+                    JWT.create()
+                            .withSubject(username)
+                            .withIssuedAt(now)
+                            .withExpiresAt(validity)
+                            .sign(algorithm);
+
+            log.trace("JWT successfully created for {}", username);
+            return token;
         } catch (Exception e) {
-            log.error("Error creating JWT token: {}", e.getMessage());
+            log.error("CRITICAL: Failed to sign JWT for user {}: {}", username, e.getMessage());
             throw new RuntimeException("Failed to create JWT token", e);
         }
     }
@@ -66,8 +70,14 @@ public class JwtServiceImpl implements JwtService {
     public String extractUsername(String token) {
         try {
             return decodeToken(token).getSubject();
+        } catch (TokenExpiredException e) {
+            log.warn("JWT validation failed: Token has expired. Details: {}", e.getMessage());
+            return null;
+        } catch (SignatureVerificationException e) {
+            log.error("SECURITY ALERT: JWT signature mismatch! Possible tampering attempt.");
+            return null;
         } catch (JWTVerificationException e) {
-            log.warn("Invalid token: {}", e.getMessage());
+            log.warn("JWT validation failed: Invalid token format or claims.");
             return null;
         }
     }
@@ -75,15 +85,26 @@ public class JwtServiceImpl implements JwtService {
     /** Validates the token against the UserDetails */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
-        return username != null
-                && username.equals(userDetails.getUsername())
-                && !isTokenExpired(token);
+        boolean isValid =
+                username != null
+                        && username.equals(userDetails.getUsername())
+                        && !isTokenExpired(token);
+
+        if (!isValid) {
+            log.debug("Token validation result: false for user: {}", userDetails.getUsername());
+        }
+        return isValid;
     }
 
     /** Checks if the token is expired */
     private boolean isTokenExpired(String token) {
         try {
-            return decodeToken(token).getExpiresAt().before(new Date());
+            Date expiresAt = decodeToken(token).getExpiresAt();
+            boolean expired = expiresAt.before(new Date());
+            if (expired) {
+                log.debug("Token expired at: {}", expiresAt);
+            }
+            return expired;
         } catch (JWTVerificationException e) {
             return true;
         }
